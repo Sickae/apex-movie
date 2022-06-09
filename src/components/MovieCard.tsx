@@ -19,5 +19,10 @@ export const MovieCard = (props: IMovieCardProps) => {
 export interface IMovieCardProps {
   id: number;
   name: string;
-  releaseDate: Date;
+  score: number;
+  genres: [
+    {
+      name: string
+    }
+  ]
 }

@@ -5,18 +5,9 @@ export const SEARCH_MOVIES_QUERY = gql`
     searchMovies(query: $query) {
       id
       name
-      overview
-      releaseDate
-      cast {
-        id
-        person {
-          name
-        }
-        role {
-          ... on Cast {
-            character
-          }
-        }
+      score,
+      genres {
+        name
       }
     }
   }`;
