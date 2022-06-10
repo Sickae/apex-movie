@@ -32,9 +32,8 @@ function App() {
         <MovieSearchBar searchHandler={searchHandler} />
   
         <ApolloProvider client={apolloClient}>
-          {searchValue.length > 0
-            ? <MovieList search={searchValue} /> 
-            : <></>
+          {searchValue.length > 0 &&
+            <MovieList search={searchValue} /> 
           } 
         </ApolloProvider>
         
