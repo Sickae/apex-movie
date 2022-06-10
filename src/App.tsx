@@ -15,20 +15,19 @@ function App() {
 
   const [errorMsg, setErrorMsg] = useState<string>();
   const [searchValue, setSearchValue] = useState('');
+  const [isSearchDisabled, setIsSearchDisabled] = useState(false);
 
   const errorHandler: ErrorHandlerFn = (() => {
-    console.log('error happened')
     setErrorMsg('Cannot load movies. Please try again later.');
   });
   
   const apolloClient = createApolloClient(errorHandler);
   
-  const searchHandler = (search: string) => {
+  const handleSearch = (search: string) => {
+    setIsSearchDisabled(true);
     setSearchValue(search);
   }
 
-  
-  
   return (
     <ThemeProvider theme={darkTheme}>
       <CssBaseline />
@@ -39,8 +38,7 @@ function App() {
       
       <Container maxWidth='xl'>
         
-        <MovieSearchBar searchHandler={searchHandler} />
-
+        <MovieSearchBar searchHandler={handleSearch} isDisabled={isSearchDisabled} />
         
         <ApolloProvider client={apolloClient}>
           {errorMsg &&
@@ -50,7 +48,7 @@ function App() {
           }
           
           {!errorMsg && searchValue.length > 0 &&
-            <MovieList search={searchValue} /> 
+            <MovieList search={searchValue} onLoad={() => setIsSearchDisabled(false)} /> 
           }
         </ApolloProvider>
 
