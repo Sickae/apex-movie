@@ -13,7 +13,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const httpLink = new HttpLink({
-  uri: process.env.REACT_APP_MOVIE_GRAPHQL_API
+  uri: process.env.REACT_APP_TMDB_GRAPHQL_API
 });
 
 export const apolloClient = new ApolloClient({
