@@ -10,20 +10,20 @@ const addObjectToSearchParams = (url: URL, obj: Record<string, any>) => {
 
 export const WikipediaClient = {
   getExactMovieDetails: async (title: string, onError?: (error: unknown) => void): Promise<IWikiMovieDetails | undefined> => {
-    const url = getApiUrl();
-    addObjectToSearchParams(url, {
-      action: 'query',
-      format: 'json',
-      prop: 'categories',
-      list: 'search',
-      clcategories: 'movie',
-      srsearch: `"${title}"`,
-      srlimit: 1,
-      srprop: 'snippet',
-      origin: '*'
-    });
-    
     try {
+      const url = getApiUrl();
+      addObjectToSearchParams(url, {
+        action: 'query',
+        format: 'json',
+        prop: 'categories',
+        list: 'search',
+        clcategories: 'movie',
+        srsearch: `"${title}"`,
+        srlimit: 1,
+        srprop: 'snippet',
+        origin: '*'
+      });
+      
       const response = await fetch(url);
       const jsonResponse = await response.json();
       

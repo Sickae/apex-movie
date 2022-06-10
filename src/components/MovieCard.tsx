@@ -1,4 +1,5 @@
 import {
+  Alert,
   Box,
   Button,
   Card,
@@ -16,14 +17,18 @@ import {IWikiMovieDetails, WikipediaClient} from "../external/wikipediaClient";
 
 export const MovieCard = (props: IMovieCardProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const [details, setDetails] = useState<IWikiMovieDetails | undefined>();
+  const [details, setDetails] = useState<IWikiMovieDetails>();
+  const [detailsError, setDetailsError] = useState<string>();
 
   const handleDetailsToggle = () => {
     const newState = !isDetailsOpen;
     setIsDetailsOpen(newState);
 
     if (newState && !details) {
-      WikipediaClient.getExactMovieDetails(props.name).then(x => setDetails(x));
+      WikipediaClient.getExactMovieDetails(props.name, (error: any) => {
+        console.error(error);
+        setDetailsError('Cannot fetch movie details. Try again later.');
+      }).then(x => setDetails(x));
     }
   }
 
@@ -75,8 +80,22 @@ export const MovieCard = (props: IMovieCardProps) => {
         <>
           <Divider />
 
-          {details
-            ? <>
+          {!details && !detailsError &&
+            <CardContent>
+              <Box display='flex' justifyContent='center'>
+                <CircularProgress />
+              </Box>
+            </CardContent>
+          }
+
+          {detailsError &&
+            <Alert color='error'>
+              {detailsError}
+            </Alert>
+          }
+          
+          {details && !detailsError &&
+            <>
               <CardContent>
                 <span dangerouslySetInnerHTML={{__html: details.htmlSnippet}} />
               </CardContent>
@@ -85,13 +104,7 @@ export const MovieCard = (props: IMovieCardProps) => {
                   <Button component='a' href={details.wikiPageLink} target='_blank'>Read more</Button>
                 </CardActions>
               }
-              
             </>
-            : <CardContent>
-              <Box display='flex' justifyContent='center'>
-                <CircularProgress />
-              </Box>
-            </CardContent>
           }
         </>
       }
