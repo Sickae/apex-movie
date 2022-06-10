@@ -1,13 +1,26 @@
-import {Box, Card, CardActionArea, CardContent, Fade, Icon, Typography} from "@mui/material";
+import {Box, Card, CardActionArea, CardContent, CircularProgress, Fade, Icon, Typography} from "@mui/material";
 import {Star} from "@mui/icons-material";
 import {useState} from "react";
+import {WikipediaClient} from "../external/wikipediaClient";
 
 export const MovieCard = (props: IMovieCardProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [wikipediaSnippet, setWikipediaSnippet] = useState('');
   
+  const handleDetailsToggle = () => {
+    const newState = !isDetailsOpen;
+    setIsDetailsOpen(newState);
+    
+    if (newState && wikipediaSnippet.length === 0) {
+      WikipediaClient.getExactMovieSnippet(props.name).then(htmlSnippet => {
+        setWikipediaSnippet(htmlSnippet ? `${htmlSnippet}...` : 'Cannot find a Wikipedia page for this movie.')
+      });
+    }
+  }
+
   return (
     <Card sx={{width: '100%'}}>
-      <CardActionArea onClick={() => setIsDetailsOpen(!isDetailsOpen)}>
+      <CardActionArea onClick={handleDetailsToggle}>
         <CardContent>
           
           <Box display='flex'>
@@ -52,7 +65,12 @@ export const MovieCard = (props: IMovieCardProps) => {
       {isDetailsOpen &&
         <Fade in={isDetailsOpen}>
           <CardContent>
-            ...details...
+            {wikipediaSnippet.length > 0
+              ? <span dangerouslySetInnerHTML={{__html: wikipediaSnippet}} />
+              : (<Box display='flex' justifyContent='center'>
+                  <CircularProgress />
+                </Box>)
+            }
           </CardContent>
         </Fade>
       }
