@@ -9,7 +9,7 @@ const addObjectToSearchParams = (url: URL, obj: Record<string, any>) => {
 }
 
 export const WikipediaClient = {
-  getExactMovieSnippet: async (title: string): Promise<string | undefined> => {
+  getExactMovieDetails: async (title: string, onError?: (error: unknown) => void): Promise<IWikiMovieDetails | undefined> => {
     const url = getApiUrl();
     addObjectToSearchParams(url, {
       action: 'query',
@@ -23,14 +23,34 @@ export const WikipediaClient = {
       origin: '*'
     });
     
-    const response = await fetch(url);
-    const jsonResponse = await response.json();
-    
-    if (jsonResponse.query?.search?.[0]?.title !== title) {
-      return;
-    }
+    try {
+      const response = await fetch(url);
+      const jsonResponse = await response.json();
+      
+      const mostRelevantResult = jsonResponse.query?.search?.[0];
+      if (mostRelevantResult?.title !== title) {
+        return {
+          htmlSnippet: 'Cannot find a Wikipedia page for this movie.',
+        };
+      }
 
-    const snippet = jsonResponse.query?.search?.[0]?.snippet;
-    return DOMPurify.sanitize(snippet);
+      const htmlSnippet = DOMPurify.sanitize(mostRelevantResult.snippet);
+      const wikiPageLink = `https://en.wikipedia.org/?curid=${mostRelevantResult.pageid}`
+      
+      return {
+        htmlSnippet: `${htmlSnippet}...`,
+        wikiPageLink,
+      }
+    }
+    catch (error) {
+      onError?.call(this, error);
+    }
+    
+    return;
   } 
+}
+
+export interface IWikiMovieDetails {
+  htmlSnippet: string;
+  wikiPageLink?: string;
 }
