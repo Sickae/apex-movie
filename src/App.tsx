@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import './App.scss';
-import {AppBar, Container, createTheme, CssBaseline, ThemeProvider, Typography} from "@mui/material";
+import {Alert, AppBar, Container, createTheme, CssBaseline, ThemeProvider, Typography} from "@mui/material";
 import {MovieSearchBar} from "./components/MovieSearchBar";
-import {ApolloProvider} from "@apollo/client";
-import apolloClient from "./graphQL/client";
 import {MovieList} from "./components/MovieList";
+import createApolloClient, {ErrorHandlerFn} from "./graphQL/client";
+import {ApolloProvider} from "@apollo/client";
 
 function App() {
   const darkTheme = createTheme({
@@ -12,12 +12,22 @@ function App() {
       mode: 'dark',
     },
   });
-  
+
+  const [errorMsg, setErrorMsg] = useState<string>();
   const [searchValue, setSearchValue] = useState('');
+
+  const errorHandler: ErrorHandlerFn = (() => {
+    console.log('error happened')
+    setErrorMsg('Cannot load movies. Please try again later.');
+  });
+  
+  const apolloClient = createApolloClient(errorHandler);
   
   const searchHandler = (search: string) => {
     setSearchValue(search);
   }
+
+  
   
   return (
     <ThemeProvider theme={darkTheme}>
@@ -30,13 +40,21 @@ function App() {
       <Container maxWidth='xl'>
         
         <MovieSearchBar searchHandler={searchHandler} />
-  
-        <ApolloProvider client={apolloClient}>
-          {searchValue.length > 0 &&
-            <MovieList search={searchValue} /> 
-          } 
-        </ApolloProvider>
+
         
+        <ApolloProvider client={apolloClient}>
+          {errorMsg &&
+            <Alert color='error'>
+              {errorMsg}
+            </Alert>
+          }
+          
+          {!errorMsg && searchValue.length > 0 &&
+            <MovieList search={searchValue} /> 
+          }
+        </ApolloProvider>
+
+
       </Container>
         
     </ThemeProvider>

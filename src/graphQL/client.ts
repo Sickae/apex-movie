@@ -1,24 +1,28 @@
 import {ApolloClient, from, HttpLink, InMemoryCache} from "@apollo/client";
-import {onError} from "@apollo/client/link/error";
+import {ErrorResponse, onError} from "@apollo/client/link/error";
 
-const errorLink = onError(({ graphQLErrors, networkError }) => {
-  if (graphQLErrors)
-    graphQLErrors.forEach(({ message, locations, path }) =>
-      console.log(
-        `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
-      ),
+export type ErrorHandlerFn = (error: ErrorResponse) => void;
+
+const getErrorLink = (errorHandler?: ErrorHandlerFn) => onError(error => {
+  errorHandler?.call(this, error);
+  
+  if (error.graphQLErrors)
+    error.graphQLErrors.forEach(({ message }) =>
+      console.error(`[GraphQL error]: ${message}`)
     );
 
-  if (networkError) console.log(`[Network error]: ${networkError}`);
+  if (error.networkError) {
+    console.error(`[Network error]: ${error.networkError}`);
+  }
 });
 
 const httpLink = new HttpLink({
   uri: process.env.REACT_APP_TMDB_GRAPHQL_API
 });
 
-export const apolloClient = new ApolloClient({
+export const createApolloClient = (errorHandler?: ErrorHandlerFn) => new ApolloClient({
   cache: new InMemoryCache(),
-  link: from([errorLink, httpLink]),
-});
+  link: from([getErrorLink(errorHandler), httpLink]),
+}); 
 
-export default apolloClient;
+export default createApolloClient;

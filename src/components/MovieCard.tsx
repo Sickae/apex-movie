@@ -27,7 +27,7 @@ export const MovieCard = (props: IMovieCardProps) => {
     if (newState && !details) {
       WikipediaClient.getExactMovieDetails(props.name, (error: any) => {
         console.error(error);
-        setDetailsError('Cannot fetch movie details. Try again later.');
+        setDetailsError('Cannot fetch movie details. Please try again later.');
       }).then(x => setDetails(x));
     }
   }
