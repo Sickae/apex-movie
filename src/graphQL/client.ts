@@ -13,7 +13,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 });
 
 const httpLink = new HttpLink({
-  uri: 'https://tmdb.sandbox.zoosh.ie/dev/grphql'
+  uri: process.env.REACT_APP_MOVIE_GRAPHQL_API
 });
 
 export const apolloClient = new ApolloClient({
