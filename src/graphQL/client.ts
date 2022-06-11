@@ -20,9 +20,11 @@ const httpLink = new HttpLink({
   uri: process.env.REACT_APP_TMDB_GRAPHQL_API
 });
 
+const _inMemoryCache = new InMemoryCache();
+
 export const createApolloClient = (errorHandler?: ErrorHandlerFn) => new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: _inMemoryCache,
   link: from([getErrorLink(errorHandler), httpLink]),
-}); 
+});
 
 export default createApolloClient;
