@@ -24,7 +24,9 @@ function App() {
   const apolloClient = createApolloClient(errorHandler);
   
   const handleSearch = (search: string) => {
-    setIsSearchDisabled(true);
+    if (search.length > 0) {
+      setIsSearchDisabled(true);
+    }
     setSearchValue(search);
   }
 
