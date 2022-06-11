@@ -14,6 +14,7 @@ import {
 import {Star} from "@mui/icons-material";
 import {useState} from "react";
 import {IWikiMovieDetails, WikipediaClient} from "../external/wikipediaClient";
+import {Link} from "react-router-dom";
 
 export const MovieCard = (props: IMovieCardProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
@@ -99,11 +100,12 @@ export const MovieCard = (props: IMovieCardProps) => {
               <CardContent>
                 <span dangerouslySetInnerHTML={{__html: details.htmlSnippet}} />
               </CardContent>
-              {details.wikiPageLink &&
-                <CardActions>
+              <CardActions>
+                {details.wikiPageLink &&
                   <Button component='a' href={details.wikiPageLink} target='_blank'>Read more</Button>
-                </CardActions>
-              }
+                }
+                <Button component={Link} to={`/related/${props.id}`}>Related movies</Button>
+              </CardActions>
             </>
           }
         </>

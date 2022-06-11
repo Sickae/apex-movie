@@ -3,11 +3,13 @@ import {SEARCH_MOVIES_QUERY} from "../graphQL/queries";
 import {Box, CircularProgress} from "@mui/material";
 import {IMovieCardProps, MovieCard} from "./MovieCard";
 import {useEffect} from "react";
+import {useParams} from "react-router-dom";
 
-export const MovieList = (props: IMovieListProps) => {  
+export const SearchMovieList = (props: IMovieListProps) => {
+  const params = useParams();
   const query = useQuery(SEARCH_MOVIES_QUERY, {
     variables: {
-      query: props.search,
+      query: params.search,
     }
   });
   
@@ -30,6 +32,5 @@ export const MovieList = (props: IMovieListProps) => {
 export type OnMovieListLoadFn = () => void;
 
 export interface IMovieListProps {
-  search: string;
   onLoad: OnMovieListLoadFn;
 }
