@@ -20,7 +20,7 @@ export const MovieCard = (props: IMovieCardProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [details, setDetails] = useState<IWikiMovieDetails>();
   const [detailsError, setDetailsError] = useState<string>();
-
+  
   const handleDetailsToggle = () => {
     const newState = !isDetailsOpen;
     setIsDetailsOpen(newState);
@@ -104,6 +104,9 @@ export const MovieCard = (props: IMovieCardProps) => {
                 {details.wikiPageLink &&
                   <Button component='a' href={details.wikiPageLink} target='_blank'>Read more</Button>
                 }
+                {props.socialMedia?.imdb &&
+                  <Button component='a' href={props.socialMedia.imdb} target='_blank'>IMDb</Button>
+                }
                 <Button component={Link} to={`/related/${props.id}`}>Related movies</Button>
               </CardActions>
             </>
@@ -124,4 +127,7 @@ export interface IMovieCardProps {
       name: string
     }
   ];
+  socialMedia: {
+    imdb?: string
+  }
 }

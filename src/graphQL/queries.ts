@@ -10,6 +10,9 @@ export const SEARCH_MOVIES_QUERY = gql`
       genres {
         name
       },
+      socialMedia {
+        imdb,
+      },
     }
   }`;
 
@@ -24,6 +27,9 @@ export const RELATED_MOVIES_QUERY = gql`
         votes,
         genres {
           name
+        },
+        socialMedia {
+          imdb,
         },
       }
     }
